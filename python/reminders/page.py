@@ -70,7 +70,9 @@ def _render_action(action, invoice, decisions):
             "</form>"
         )
         if decision:
-            parts.append(f'<p class="decision">You {escape(decision)} this reminder.</p>')
+            parts.append(
+                f'<p class="decision" role="status">You {escape(decision)} this reminder.</p>'
+            )
     else:
         parts.append('<p class="note">No approval needed for this reminder.</p>')
 

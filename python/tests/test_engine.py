@@ -43,6 +43,12 @@ class ShapeTest(unittest.TestCase):
         with self.assertRaises(PlanError):
             plan([], today="12/10/2026")
 
+    def test_non_list_inputs_raise_a_plan_error(self):
+        with self.assertRaises(PlanError):
+            build_plan({"id": "INV-1"}, [], TODAY)
+        with self.assertRaises(PlanError):
+            build_plan([], {"step": "firm"}, TODAY)
+
 
 class SkipReasonTest(unittest.TestCase):
     def test_duplicate_id_skipped_once_for_every_copy(self):

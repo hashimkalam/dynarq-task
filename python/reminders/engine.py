@@ -90,11 +90,11 @@ def _plan_action(invoice, sent_steps, today):
 
     message = build_message(
         step=step,
-        customer=invoice["customer"],
+        customer=invoice.get("customer", ""),
         invoice_id=invoice["id"],
         due_date=invoice["due_date"],
         amount=invoice["amount"],
-        currency=invoice["currency"],
+        currency=invoice.get("currency", ""),
         days_overdue=overdue,
     )
     return {
@@ -109,6 +109,10 @@ def _plan_action(invoice, sent_steps, today):
 def build_plan(invoices, sent, today):
     """Return the plan for `today` with today, actions and skipped, both sorted."""
     today_date = parse_today(today)
+    if not isinstance(invoices, list):
+        raise PlanError("invoices must be a list of invoice objects")
+    if not isinstance(sent, list):
+        raise PlanError("sent must be a list of reminder entries")
 
     id_counts = Counter(invoice.get("id") for invoice in invoices)
     duplicate_ids = {invoice_id for invoice_id, count in id_counts.items() if count > 1}

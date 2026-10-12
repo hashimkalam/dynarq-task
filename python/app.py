@@ -33,6 +33,10 @@ def read_json(path):
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
+        if self.path == "/favicon.ico":
+            self.send_response(204)
+            self.end_headers()
+            return
         if self.path not in ("/", "/index.html"):
             self.send_error(404)
             return
@@ -62,8 +66,11 @@ class Handler(BaseHTTPRequestHandler):
         return render_page(plan, invoices, DECISIONS), 200
 
     def _form_fields(self):
-        length = int(self.headers.get("Content-Length", "0"))
-        body = self.rfile.read(length).decode("utf-8")
+        try:
+            length = max(int(self.headers.get("Content-Length", "0")), 0)
+        except (TypeError, ValueError):
+            length = 0
+        body = self.rfile.read(length).decode("utf-8", "replace")
         return {key: values[0] for key, values in parse_qs(body).items()}
 
     def _send_html(self, body, status):
